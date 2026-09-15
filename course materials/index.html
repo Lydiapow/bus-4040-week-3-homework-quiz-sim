@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUS 4040 — Weeks 1–3 Quiz</title>
+<style>
+  :root {
+    --ink: #1c2333;
+    --ink-soft: #4a5268;
+    --paper: #f6f4ef;
+    --card: #ffffff;
+    --line: #e2ddd0;
+    --branch: #3f6b52;
+    --branch-soft: #e7efe9;
+    --miss: #9c4a3c;
+    --miss-soft: #f6e9e6;
+    --week1: #6b5b95;
+    --week2: #3f6b52;
+    --week3: #b8863b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 64px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  header.masthead {
+    text-align: left;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+  }
+
+  header.masthead h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    letter-spacing: 0.2px;
+  }
+
+  header.masthead p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px;
+  }
+
+  /* ---- Start screen ---- */
+  .start-copy p {
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .week-legend {
+    display: flex;
+    gap: 10px;
+    margin: 18px 0 24px;
+    flex-wrap: wrap;
+  }
+
+  .legend-chip {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+
+  .legend-chip .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 7px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .btn-primary:hover { background: #2c3550; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .btn-secondary:hover { border-color: var(--ink-soft); }
+
+  .btn-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  /* ---- Progress ---- */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .progress-track {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    margin: 0 14px;
+  }
+
+  .progress-dot {
+    height: 4px;
+    flex: 1;
+    background: var(--line);
+    border-radius: 2px;
+  }
+
+  .progress-dot.done { background: var(--ink); }
+
+  /* ---- Question ---- */
+  .week-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 5px;
+    margin-bottom: 14px;
+  }
+
+  .qtype {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .prompt {
+    font-size: 19px;
+    line-height: 1.4;
+    margin: 0 0 20px;
+    font-weight: 600;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    text-align: left;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: var(--ink-soft);
+  }
+
+  .option:disabled { cursor: default; }
+
+  .option.correct {
+    background: var(--branch-soft);
+    border-color: var(--branch);
+  }
+
+  .option.incorrect {
+    background: var(--miss-soft);
+    border-color: var(--miss);
+  }
+
+  .option.reveal {
+    background: var(--branch-soft);
+    border-color: var(--branch);
+  }
+
+  /* ---- Feedback ---- */
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 18px;
+    border-radius: 8px;
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  .feedback.correct-fb {
+    background: var(--branch-soft);
+    border: 1px solid var(--branch);
+  }
+
+  .feedback.incorrect-fb {
+    background: var(--miss-soft);
+    border: 1px solid var(--miss);
+  }
+
+  .feedback .verdict {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .feedback.correct-fb .verdict { color: var(--branch); }
+  .feedback.incorrect-fb .verdict { color: var(--miss); }
+
+  .next-row {
+    margin-top: 20px;
+  }
+
+  /* ---- Results ---- */
+  .score-hero {
+    text-align: center;
+    padding: 8px 0 24px;
+  }
+
+  .score-hero .big {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-hero .pct {
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin-top: 8px;
+  }
+
+  .breakdown {
+    display: flex;
+    gap: 10px;
+    margin: 22px 0;
+    flex-wrap: wrap;
+  }
+
+  .breakdown .stat {
+    flex: 1;
+    min-width: 110px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .breakdown .stat .n {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .breakdown .stat .label {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+
+  .missed-list {
+    margin-top: 6px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+
+  .missed-list h3 {
+    font-size: 14px;
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+
+  .missed-item {
+    font-size: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .missed-item:last-child { border-bottom: none; }
+
+  .missed-item .wk {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+
+  footer.note {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    margin-top: 20px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .option, .btn-primary, .btn-secondary { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="masthead">
+    <h1>Weeks 1–3 Study Quiz</h1>
+    <p>BUS 4040 — AI for Business Applications</p>
+  </header>
+
+  <div class="card" id="cardRoot"></div>
+  <footer class="note" id="footNote"></footer>
+</div>
+
+<script>
+/* ============================ QUESTION BANK ============================
+   Every question, option, correct answer, and explanation below is drawn
+   only from the Week 1–3 homework and narrative files.
+=========================================================================*/
+const QUESTIONS = [
+  {
+    id: "w1-1", week: 1, type: "mc",
+    prompt: "According to the Week 1 homework, what is the real point of version control once AI can generate hundreds of lines of code in seconds?",
+    options: [
+      "It lets you tell what just changed, undo it, and have someone check it before it reaches a customer",
+      "It automatically fixes bugs in AI-generated code",
+      "It makes AI write code faster",
+      "It replaces the need for a business requirement"
+    ],
+    correctIndex: 0,
+    explanation: "Week 1 frames version control as the answer to three questions once AI can generate code instantly: can you tell what changed, can you undo it, and can someone else check it before it reaches a customer."
+  },
+  {
+    id: "w1-2", week: 1, type: "tf",
+    prompt: "True or False: If you already have a GitHub account, the homework tells you to create a second one using your U of I email.",
+    options: ["True", "False"],
+    correctIndex: 1,
+    explanation: "The homework is explicit: if you already have a GitHub account, do not create a second one. Instead, add your U of I email to the account you already have."
+  },
+  {
+    id: "w1-3", week: 1, type: "mc",
+    prompt: "Which two GitHub settings keep your personal email address out of public commit records?",
+    options: [
+      "\"Two-factor authentication\" and \"Sign out of other sessions\"",
+      "\"Keep my email addresses private\" and \"Block command line pushes that expose my email\"",
+      "\"Make repository private\" and \"Disable Issues\"",
+      "\"Primary email address\" and \"Notification email\""
+    ],
+    correctIndex: 1,
+    explanation: "Under Settings > Emails, checking \"Keep my email addresses private\" and \"Block command line pushes that expose my email\" keeps a personal address out of public commit history."
+  },
+  {
+    id: "w1-4", week: 1, type: "tf",
+    prompt: "True or False: GitHub requires two-factor authentication, and an authenticator app on your phone is described as the easiest option.",
+    options: ["True", "False"],
+    correctIndex: 0,
+    explanation: "Week 1 homework says to turn on two-factor authentication because GitHub requires it, and recommends an authenticator app as the easiest option."
+  },
+  {
+    id: "w1-5", week: 1, type: "mc",
+    prompt: "In the Week 1 narrative's grading table, what percentage of the final grade is GitHub Setup worth?",
+    options: ["5%", "10%", "15%", "20%"],
+    correctIndex: 0,
+    explanation: "The grading table lists GitHub Setup (\"Github connectivity and successful Pull Request\") at 5% of the final grade."
+  },
+  {
+    id: "w1-6", week: 1, type: "tf",
+    prompt: "True or False: The Week 1 homework tells you to install Git and create test repositories while you watch the recommended videos.",
+    options: ["True", "False"],
+    correctIndex: 1,
+    explanation: "The homework says the opposite: even though the videos encourage installing tools and creating repos, you should not install software — just watch to get familiar with the GitHub flow."
+  },
+  {
+    id: "w2-1", week: 2, type: "mc",
+    prompt: "According to the Week 2 narrative's short history of version control, who created Git, and why?",
+    options: [
+      "Linus Torvalds, after the Linux kernel project lost access to its proprietary version control tool",
+      "A team at GitHub, to launch their new hosting platform",
+      "Guido van Rossum, to manage the Python project",
+      "A university research lab studying distributed databases"
+    ],
+    correctIndex: 0,
+    explanation: "In 2005, Linus Torvalds created Git for Linux kernel development after the project lost access to its proprietary tool, releasing a free, fast, decentralized system."
+  },
+  {
+    id: "w2-2", week: 2, type: "tf",
+    prompt: "True or False: One reason Git matters is that it is decentralized — every developer holds a full copy of the entire history, so there is no single point of failure.",
+    options: ["True", "False"],
+    correctIndex: 0,
+    explanation: "Week 2 contrasts Git with earlier centralized systems: with Git, every developer holds a full copy of the entire history, and there's no single bottleneck or single point of failure."
+  },
+  {
+    id: "w2-3", week: 2, type: "mc",
+    prompt: "When creating a new repository through the GitHub website, why does the narrative say you should set \"Add README\" to On?",
+    options: [
+      "It creates the first commit and maps the repo to the main branch, so it isn't empty when you clone it",
+      "It automatically writes your project's documentation for you",
+      "It is required before you can invite teammates",
+      "It turns on two-factor authentication for the repo"
+    ],
+    correctIndex: 0,
+    explanation: "Adding a README creates an initial commit that maps the repo to the main branch, which is why the repo isn't empty when you clone it."
+  },
+  {
+    id: "w2-4", week: 2, type: "mc",
+    prompt: "In the Week 2 \"Marvel multiverse\" analogy for Git, what does checking out a branch represent?",
+    options: [
+      "Deleting a timeline permanently",
+      "Merging two timelines into one",
+      "Creating a new timeline (a copy) of main",
+      "Publishing your changes to every other developer at once"
+    ],
+    correctIndex: 2,
+    explanation: "In the analogy, main is the original reality, and checking out a branch creates a new timeline — a copy — of main."
+  },
+  {
+    id: "w2-5", week: 2, type: "tf",
+    prompt: "True or False: The Week 2 material says HTTPS authentication is fine for connecting to GitHub in this class.",
+    options: ["True", "False"],
+    correctIndex: 0,
+    explanation: "The connecting-to-GitHub guide compares HTTPS and SSH keys and states plainly: \"For this class, HTTPS is fine.\""
+  },
+  {
+    id: "w2-6", week: 2, type: "mc",
+    prompt: "What does the GH007 error (\"Your push would publish a private email address\") mean, and how do you fix it?",
+    options: [
+      "Your repository is private; make it public",
+      "Your git config user.email is set to your real address; set it to your GitHub noreply address instead",
+      "You are not signed in to GitHub; run gh auth login",
+      "Your branch name conflicts with main; rename the branch"
+    ],
+    correctIndex: 1,
+    explanation: "The common-problems table explains that this error means your git config --global user.email is your real address, and the fix is setting it to your GitHub noreply address from Settings > Emails."
+  },
+  {
+    id: "w2-7", week: 2, type: "tf",
+    prompt: "True or False: Week 2 advises that you should feel free to put passwords, keys, or secrets into AI prompts since AI tools keep them private.",
+    options: ["True", "False"],
+    correctIndex: 1,
+    explanation: "The guide says the opposite: don't put passwords, keys, or secrets in AI prompts, and to assume everything entered into an AI may become public information."
+  },
+  {
+    id: "w3-1", week: 3, type: "mc",
+    prompt: "According to the Week 3 Mindrouter setup guide, what do you need to connect to before you can reach Mindrouter?",
+    options: [
+      "A personal VPN service of your choice",
+      "The University of Idaho VPN, since Mindrouter is only reachable from the campus network",
+      "A public coffee-shop Wi-Fi network",
+      "Nothing — Mindrouter is reachable from anywhere"
+    ],
+    correctIndex: 1,
+    explanation: "The setup guide says Mindrouter is only reachable from the campus network, so if you're off campus you must first connect the University of Idaho VPN."
+  },
+  {
+    id: "w3-2", week: 3, type: "tf",
+    prompt: "True or False: A Mindrouter API key starts with the characters \"mr2_\".",
+    options: ["True", "False"],
+    correctIndex: 0,
+    explanation: "The setup guide lists the API key format as starting with mr2_, created by the student through the Mindrouter Quick Start guide."
+  },
+  {
+    id: "w3-3", week: 3, type: "mc",
+    prompt: "In the Week 3 \"harness vs. model\" analogy, what does the harness represent?",
+    options: [
+      "The music itself — the AI's actual output",
+      "The music player — the program you use to interact with the AI model",
+      "The recording label that owns the AI",
+      "The lyrics generated by the model"
+    ],
+    correctIndex: 1,
+    explanation: "Week 3 describes the harness as the program you use to interact with a model, comparing it to a music player, while the model itself is the music."
+  },
+  {
+    id: "w3-4", week: 3, type: "mc",
+    prompt: "According to the Week 3 narrative, what are Anthropic's four Claude model tiers, from largest to smallest?",
+    options: [
+      "Haiku, Sonnet, Opus, Fable",
+      "Fable, Opus, Sonnet, Haiku",
+      "Sonnet, Fable, Haiku, Opus",
+      "Opus, Fable, Sonnet, Haiku"
+    ],
+    correctIndex: 1,
+    explanation: "The narrative lists Claude's four tiers, largest to smallest, as Fable, Opus, Sonnet, and Haiku."
+  },
+  {
+    id: "w3-5", week: 3, type: "tf",
+    prompt: "True or False: According to Week 3, a single token is roughly equal to one full English word.",
+    options: ["True", "False"],
+    correctIndex: 1,
+    explanation: "Week 3 defines a token as roughly 3/4 of an average English word, not a full word — short words are one token, but longer or unusual words split into several."
+  },
+  {
+    id: "w3-6", week: 3, type: "mc",
+    prompt: "According to Week 3, roughly when did the kind of AI we use today first surface, and when did progress become explosive?",
+    options: [
+      "Surfaced around 2011, explosive progress since 2023",
+      "Surfaced in the 1950s, explosive progress since 2000",
+      "Surfaced around 2020, explosive progress since 2021",
+      "Surfaced in the 1990s, explosive progress since 2010"
+    ],
+    correctIndex: 0,
+    explanation: "Week 3 says AI research started in the 1950s, but the AI we use today surfaced around 2011, with explosive progress since 2023."
+  },
+  {
+    id: "w3-7", week: 3, type: "mc",
+    prompt: "Which Claude harness slash command is described as starting a completely fresh conversation?",
+    options: ["/memory", "/compact", "/clear", "/agents"],
+    correctIndex: 2,
+    explanation: "Among the Claude harness slash commands, /clear is the one described as starting a fresh conversation, while /memory edits what Claude remembers and /compact shrinks context."
+  }
+];
+
+/* ============================ APP STATE ================================ */
+let deck = [];          // active question order for this run
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let missedIds = new Set();   // ids missed in the *original* full run
+let sessionResults = [];     // {id, gotItRight} for current deck
+let mode = "full";           // "full" | "retry"
+
+const weekLabel = { 1: "Week 1", 2: "Week 2", 3: "Week 3" };
+const weekColor = { 1: "var(--week1)", 2: "var(--week2)", 3: "var(--week3)" };
+const weekSoft  = { 1: "#efecf6", 2: "var(--branch-soft)", 3: "#f7ecd9" };
+
+const root = document.getElementById("cardRoot");
+const foot = document.getElementById("footNote");
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function byId(id) { return QUESTIONS.find(q => q.id === id); }
+
+/* ---------------------------- START SCREEN ---------------------------- */
+function renderStart() {
+  foot.textContent = "";
+  root.innerHTML = `
+    <div class="start-copy">
+      <p>20 questions covering GitHub setup, version control, and AI model basics from Weeks 1–3. Questions are shuffled each time you start, and every answer comes with a short explanation and the week it's drawn from.</p>
+    </div>
+    <div class="week-legend">
+      <span class="legend-chip"><span class="dot" style="background:${weekColor[1]}"></span>Week 1</span>
+      <span class="legend-chip"><span class="dot" style="background:${weekColor[2]}"></span>Week 2</span>
+      <span class="legend-chip"><span class="dot" style="background:${weekColor[3]}"></span>Week 3</span>
+    </div>
+    <button class="btn-primary" id="startBtn">Start quiz</button>
+  `;
+  document.getElementById("startBtn").addEventListener("click", () => startRun("full"));
+}
+
+function startRun(runMode) {
+  mode = runMode;
+  if (runMode === "full") {
+    deck = shuffle(QUESTIONS);
+    missedIds = new Set();
+  } else {
+    deck = shuffle(QUESTIONS.filter(q => missedIds.has(q.id)));
+  }
+  currentIndex = 0;
+  score = 0;
+  sessionResults = [];
+  renderQuestion();
+}
+
+/* --------------------------- QUESTION SCREEN --------------------------- */
+function renderQuestion() {
+  answered = false;
+  const q = deck[currentIndex];
+  const total = deck.length;
+
+  let dots = "";
+  for (let i = 0; i < total; i++) {
+    dots += `<div class="progress-dot ${i < currentIndex ? "done" : ""}"></div>`;
+  }
+
+  const optsHtml = q.options.map((opt, i) =>
+    `<button class="option" data-idx="${i}">${opt}</button>`
+  ).join("");
+
+  root.innerHTML = `
+    <div class="progress-row">
+      <span>${mode === "retry" ? "Retry" : "Question"} ${currentIndex + 1} / ${total}</span>
+      <div class="progress-track">${dots}</div>
+      <span>Score: ${score}</span>
+    </div>
+    <span class="week-tag" style="background:${weekSoft[q.week]}; color:${weekColor[q.week]}">${weekLabel[q.week]}</span>
+    <div class="qtype">${q.type === "tf" ? "True / False" : "Multiple choice"}</div>
+    <p class="prompt">${q.prompt}</p>
+    <div class="options" id="optsWrap">${optsHtml}</div>
+    <div id="feedbackWrap"></div>
+  `;
+
+  foot.textContent = "";
+
+  document.querySelectorAll("#optsWrap .option").forEach(btn => {
+    btn.addEventListener("click", () => selectAnswer(parseInt(btn.dataset.idx, 10)));
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = deck[currentIndex];
+  const correct = idx === q.correctIndex;
+
+  if (correct) score++;
+  sessionResults.push({ id: q.id, correct });
+  if (!correct) missedIds.add(q.id);
+  else if (mode === "retry") missedIds.delete(q.id);
+
+  document.querySelectorAll("#optsWrap .option").forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correctIndex) btn.classList.add("correct");
+    else if (i === idx) btn.classList.add("incorrect");
+  });
+
+  const fbWrap = document.getElementById("feedbackWrap");
+  fbWrap.innerHTML = `
+    <div class="feedback ${correct ? "correct-fb" : "incorrect-fb"}">
+      <span class="verdict">${correct ? "Correct." : "Not quite."}</span>
+      ${q.explanation}
+    </div>
+    <div class="next-row">
+      <button class="btn-primary" id="nextBtn">${currentIndex + 1 < deck.length ? "Next question" : "See results"}</button>
+    </div>
+  `;
+  document.getElementById("nextBtn").addEventListener("click", () => {
+    if (currentIndex + 1 < deck.length) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      renderResults();
+    }
+  });
+}
+
+/* ---------------------------- RESULTS SCREEN ---------------------------- */
+function renderResults() {
+  const total = deck.length;
+  const pct = Math.round((score / total) * 100);
+  const missedThisRun = sessionResults.filter(r => !r.correct).map(r => byId(r.id));
+
+  const missedHtml = missedThisRun.length
+    ? `<div class="missed-list">
+        <h3>Questions to review</h3>
+        ${missedThisRun.map(q => `
+          <div class="missed-item">
+            <span>${q.prompt}</span>
+            <span class="wk" style="background:${weekSoft[q.week]}; color:${weekColor[q.week]}">${weekLabel[q.week]}</span>
+          </div>
+        `).join("")}
+      </div>`
+    : `<div class="missed-list"><h3>No missed questions — nice work.</h3></div>`;
+
+  root.innerHTML = `
+    <div class="score-hero">
+      <div class="big">${score} / ${total}</div>
+      <div class="pct">${pct}% correct</div>
+    </div>
+    <div class="breakdown">
+      <div class="stat"><div class="n">${score}</div><div class="label">Correct</div></div>
+      <div class="stat"><div class="n">${total - score}</div><div class="label">Missed</div></div>
+      <div class="stat"><div class="n">${missedIds.size}</div><div class="label">Still to review</div></div>
+    </div>
+    ${missedHtml}
+    <div class="btn-row">
+      ${missedIds.size > 0 ? `<button class="btn-primary" id="retryBtn">Retry missed questions (${missedIds.size})</button>` : ""}
+      <button class="btn-secondary" id="restartBtn">Restart full quiz</button>
+    </div>
+  `;
+
+  foot.textContent = "";
+
+  if (missedIds.size > 0) {
+    document.getElementById("retryBtn").addEventListener("click", () => startRun("retry"));
+  }
+  document.getElementById("restartBtn").addEventListener("click", () => startRun("full"));
+}
+
+/* ------------------------------- INIT ------------------------------- */
+renderStart();
+</script>
+
+</body>
+</html>
